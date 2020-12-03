@@ -12,4 +12,5 @@ public interface Locators {
     By prodList = By.cssSelector("ul.product_list >li");
     By searchInput = By.cssSelector("input[id='search_query_top']");
     By searcButton = By.cssSelector("button[name='submit_search']");
+
 }

@@ -1,6 +1,6 @@
 package utilities;
 
-public enum Conditions {
+public enum Condition {
     exist,
     appear,
     visible,

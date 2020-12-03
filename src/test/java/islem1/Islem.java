@@ -50,6 +50,14 @@ public class Islem {
         return this;
     }
 
+    public Islem module(int m){
+        deger %= m;
+        return this;
+    }
+
+    public double val(){
+        return deger;
+    }
     public void yazdir(){
         System.out.println(deger);
     }

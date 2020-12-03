@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ElementClass {
 
@@ -13,20 +14,22 @@ public class ElementClass {
     private WebElement element;
     private WebDriverWait wait;
     private By by;
-
+    By optionList = By.cssSelector("mat-option[role='option']");
 
     public static void open(String url){
         new ElementClass().getUrl(url);
-
     }
+    public void getUrl(String url){
+        driver.get(url);
+    }
+
 
     public static ElementClass $(By by){
         return new ElementClass(by);
     }
 
-
-    public static List<WebElement> $$(By by){
-        return new ElementClass(by).findElements();
+    public static ElementClass $(WebElement e){
+        return new ElementClass(e);
     }
 
     private ElementClass(){
@@ -40,10 +43,15 @@ public class ElementClass {
         this.by = by;
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
         element = driver.findElements(by).get(0);
+
+        //wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        //element = driver.findElement(by);
+
     }
 
-    public void getUrl(String url){
-        driver.get(url);
+    private ElementClass(WebElement e){
+        this();
+        this.element = e;
     }
 
     public void click(){
@@ -70,11 +78,11 @@ public class ElementClass {
 
     public ElementClass scrollIntoView(){
         ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].scrollIntoView();", element);
+                .executeScript("arguments[0].scrollIntoView(true);", element);
         return this;
     }
 
-    public ElementClass shouldBe(Conditions cons){
+    public ElementClass shouldBe(Condition cons){
         switch (cons){
             case exist:
                 wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
@@ -90,8 +98,8 @@ public class ElementClass {
         return this;
     }
 
-    public ElementClass waitUntil(Conditions cons, int seconds){
-        WebDriverWait w = new WebDriverWait(driver,  seconds*1000);
+    public ElementClass waitUntil(Condition cons, long seconds){
+        WebDriverWait w = new WebDriverWait(driver,  seconds);
         switch (cons){
             case exist:
                 w.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
@@ -108,13 +116,38 @@ public class ElementClass {
 
     }
 
-    public List<WebElement> findElements(){
-        List<WebElement> elements = new ArrayList<WebElement>();
-        return driver.findElements(by);
-    }
-
     public WebElement getElement(){
         return element;
+    }
+
+
+    public ElementClass selectOption(String text){
+        element.click();
+        List<WebElement> list = driver.findElements(optionList);
+        for (WebElement e : list) {
+            if (e.getText().trim().equalsIgnoreCase(text)){
+                e.click();
+                break;
+            }
+        }
+        return this;
+    }
+
+    public ElementClass selectOption(int option){
+        element.click();
+        List<WebElement> list = driver.findElements(optionList);
+        if (option<0) option = 0;
+        if (option>=list.size()) option = list.size()-1;
+        list.get(option).click();
+        return this;
+    }
+
+    public ElementClass selectOption(){
+        element.click();
+        List<WebElement> list = driver.findElements(optionList);
+        int option = new Random().nextInt(list.size());
+        list.get(option).click();
+        return this;
     }
 
 }
